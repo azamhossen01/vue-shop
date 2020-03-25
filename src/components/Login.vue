@@ -21,13 +21,13 @@
             <form action="">
               <div class="form-group">
                 <label for="email">Email Address</label>
-                <input type="email" class="form-control" name="email" id="email" placeholder="Email-Address">
+                <input type="email" class="form-control" v-model="email" name="email" id="email" placeholder="Email-Address">
               </div>
               <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" class="form-control" name="password" id="password" placeholder="Password">
+                <input type="password" class="form-control" v-model="password" name="password" id="password" placeholder="Password">
               </div>
-              <button class="btn btn-primary">Signin</button>
+              <button class="btn btn-primary" @click.prevent="signInUser">Signin</button>
             </form>
           </div>
         </div>
@@ -62,6 +62,7 @@
     </div>
 </template>
 <script>
+const $ = window.$;
 import {fb} from '../firebase'
 export default {
     name : 'Login',
@@ -69,12 +70,31 @@ export default {
       return {
         login : true,
         register : false,
-        name : null,
-        email : null,
-        password : null
+        name : '',
+        email : '',
+        password : ''
       }
     },
     methods : {
+      signInUser(){
+        fb.auth().signInWithEmailAndPassword(this.email, this.password)
+        .then(()=>{
+                alert('login successful');
+                $('#login').modal('hide');
+                this.$router.replace('/admin');
+            })
+            .catch(function(error) {
+          // Handle Errors here.
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          if (errorCode === 'auth/wrong-password') {
+            alert('Wrong password.');
+          } else {
+            alert(errorMessage);
+          }
+          console.log(error);
+        });
+      },
       getButton(){
         if(this.login == true){
           return 'btn btn-primary';
@@ -91,22 +111,29 @@ export default {
         this.register = true;
       },
       registerUser(){
-        fb.auth().createUserWithEmailAndPassword(this.email, this.password)
-        .then(()=>{
-          this.$router.replace('admin');
-        })
-    .catch(function(error) {
-  // Handle Errors here.
-  var errorCode = error.code;
-  var errorMessage = error.message;
-  if (errorCode == 'auth/weak-password') {
-    alert('The password is too weak.');
-  } else {
-    alert(errorMessage);
-  }
-  console.log(error);
-});
+        alert(this.email);
+          fb.auth().createUserWithEmailAndPassword(this.email, this.password)
+            .then((user)=>{
+         console.log(user);
+          this.$router.replace('/admin');
+         // alert(user.email+" created successfully");
+            })
+                .catch(function(error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            if (errorCode == 'auth/weak-password') {
+                alert('The password is too weak.');
+            } else {
+                alert(errorMessage);
+            }
+            console.log(error);
+            });
       }
+
+
+
+
     }
 }
 </script>

@@ -63,9 +63,9 @@
                             </router-link>
                         </li>
                         <li>
-                            <a href="#">
+                            <a href="javascript:void(0)">
                                 <i class="fa fa-folder"></i>
-                                <span class="menu-text">Logout</span>
+                                <span class="menu-text" @click="logOut">Logout</span>
                             </a>
                         </li>
                     </ul>
@@ -228,7 +228,18 @@
    
 </template>
 <script>
+import {fb} from '../firebase';
 export default {
-    name : 'Admin'
+    name : 'Admin',
+    methods : {
+        logOut(){
+           fb.auth().signOut().then(() => {
+            this.$router.replace('/');
+            // this.$router.replace('/home');
+            }).catch(function(error) {
+            console.log(error);
+            });
+        }
+    }
 }
 </script>

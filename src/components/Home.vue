@@ -7,13 +7,13 @@
 </template>
 
 <script>
-import Login from './Login.vue'
+// import Login from './Login.vue'
 export default {
   name: 'Home',
   props: {
     msg: String
   },
-  components : {Login}
+  // components : {Login}
 }
 </script>
 
